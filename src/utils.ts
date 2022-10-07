@@ -176,5 +176,14 @@ export function isEqual (a: string, b: string, opts: CompareURLOptions = {}) {
     a = decode(a)
     b = decode(b)
   }
-  return a === b
+  // For query params with + instead of %20 (Nuxt + Vercel infinite redirection loop isuue)
+  return replaceQuerySpaces(a) === replaceQuerySpaces(b)
+}
+
+function replaceQuerySpaces(input: string): string {
+  let parts = input.split('?')
+  if (parts.length > 1) {
+    parts[1] = parts[1].replace(/(\s|\+)/g, '%20')
+  }
+  return parts.join('?')
 }
